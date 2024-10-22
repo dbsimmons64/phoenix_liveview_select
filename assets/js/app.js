@@ -66,10 +66,10 @@ Hooks.Select = {
       optionElements[this.activeOptionIndex].classList.add("bg-gray-200")
 
       // Scroll the selected item into view
-      optionElements[this.activeOptionIndex].scrollIntoView({
-        block: "nearest",
-        behavior: "smooth"
-      });
+      // optionElements[this.activeOptionIndex].scrollIntoView({
+      //   block: "nearest",
+      //   behavior: "smooth"
+      // });
     }
 
     this.onItemSelect = (e) => {

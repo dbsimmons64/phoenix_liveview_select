@@ -43,8 +43,6 @@ defmodule PhoenixLiveviewSelectWeb.EmployeeLive.Index do
 
   @impl true
   def handle_event("validate", employee_params, socket) do
-    dbg(employee_params)
-
     socket =
       socket |> assign(form: to_form(employee_params))
 
@@ -52,11 +50,10 @@ defmodule PhoenixLiveviewSelectWeb.EmployeeLive.Index do
   end
 
   def handle_event("save", employee_params, socket) do
-    dbg(employee_params)
-
-    socket
-    |> assign(form: to_form(employee_params))
-    |> put_flash(:info, "Success: #{inspect(employee_params)}")
+    socket =
+      socket
+      |> assign(form: to_form(employee_params))
+      |> put_flash(:info, "Success: #{inspect(employee_params)}")
 
     {:noreply, socket}
   end
