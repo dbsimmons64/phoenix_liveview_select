@@ -13,7 +13,7 @@ defmodule PhoenixLiveviewSelectWeb.Live.Components.Select do
             type="hidden"
             id={@id <> "_value_input"}
             name={@name}
-            value={if @selected, do: @selected.id}
+            value={if @selected, do: @selected.text}
           />
 
           <input
@@ -21,7 +21,7 @@ defmodule PhoenixLiveviewSelectWeb.Live.Components.Select do
             id={@id <> "_input"}
             type="text"
             autocomplete="off"
-            value={if @selected, do: @selected.name}
+            value={if @selected, do: @selected.text}
             class={[
               "mt-2 block w-full rounded-lg text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6",
               "phx-no-feedback:border-zinc-300 phx-no-feedback:focus:border-zinc-400",
@@ -39,17 +39,15 @@ defmodule PhoenixLiveviewSelectWeb.Live.Components.Select do
           id={@id <> "_select"}
           class="absolute w-full top-[100%] border border-zinc-300 rounded shadow-md my-2 bg-white hidden"
         >
-          <div class="relative max-h-[200px] overflow-y-auto py-1">
+          <div class="relative max-h-[200px] overflow-y-auto py-1 bg-white z-10">
             <%= if Enum.empty?(@options) do %>
               <p class="p-2 text-sm">No results</p>
             <% else %>
               <%= for option <- @options do %>
                 <div
                   class="p-1 cursor-default hover:bg-gray-200 text-sm flex items-center"
-                  data-id={option.id}
                   data-text={option.text}
                 >
-                  <%!-- <img src={option.avatar_url} alt={option.text} class="w-5 h-5 mr-1" /> --%>
                   <%= render_slot(@option, option) %>
                 </div>
               <% end %>
@@ -70,12 +68,12 @@ defmodule PhoenixLiveviewSelectWeb.Live.Components.Select do
     socket =
       socket
       |> assign(assigns)
-      |> assign(field: nil, id: assigns.id || field.id)
+      |> assign(id: assigns.id || field.id)
       |> assign(:errors, Enum.map(field.errors, &translate_error(&1)))
       |> assign_new(:name, fn -> field.name end)
-      |> assign_new(:value, fn -> field.value end)
 
-    selected = Enum.find(socket.assigns.options, &(&1.id == field.value))
+    selected = Enum.find(socket.assigns.options, &(&1.text == field.value))
+
     socket = assign(socket, :selected, selected)
 
     {:ok, socket}

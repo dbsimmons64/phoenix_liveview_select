@@ -4,6 +4,7 @@ defmodule PhoenixLiveviewSelectWeb.EmployeeLive.Index do
   alias PhoenixLiveviewSelectWeb.Live.Components.Select
   alias PhoenixLiveviewSelect.Countries
 
+  @category_options [%{text: "foo"}, %{text: "boo"}, %{text: "woo"}]
   @impl true
   def render(assigns) do
     ~H"""
@@ -26,6 +27,19 @@ defmodule PhoenixLiveviewSelectWeb.EmployeeLive.Index do
         </:option>
       </.live_component>
 
+      <.live_component
+        field={@form[:category]}
+        id={@form[:category].id}
+        module={Select}
+        autocomplete="autocomplete_category"
+        label="Category"
+        options={@category_options}
+      >
+        <:option :let={category}>
+          <%= category.text %>
+        </:option>
+      </.live_component>
+
       <.button type="submit">Save</.button>
     </.simple_form>
     """
@@ -37,6 +51,7 @@ defmodule PhoenixLiveviewSelectWeb.EmployeeLive.Index do
       socket
       |> assign(form: to_form(%{}))
       |> update_countries_options()
+      |> assign(category_options: @category_options)
 
     {:ok, socket}
   end
@@ -50,6 +65,8 @@ defmodule PhoenixLiveviewSelectWeb.EmployeeLive.Index do
   end
 
   def handle_event("save", employee_params, socket) do
+    dbg(employee_params)
+
     socket =
       socket
       |> assign(form: to_form(employee_params))
@@ -59,7 +76,12 @@ defmodule PhoenixLiveviewSelectWeb.EmployeeLive.Index do
   end
 
   def handle_event("autocomplete_countries", %{"query" => query}, socket) do
+    dbg(query)
     {:noreply, update_countries_options(socket, query)}
+  end
+
+  def handle_event("autocomplete_category", %{"query" => query}, socket) do
+    {:noreply, socket}
   end
 
   defp update_countries_options(socket, query \\ "") do

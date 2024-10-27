@@ -49,7 +49,7 @@ Hooks.Select = {
     }
 
     this.setActiveElementIndex = (index) => {
-      const optionElements = this.selectMenu.querySelectorAll("[data-id")
+      const optionElements = this.selectMenu.querySelectorAll("[data-text")
 
       if (optionElements[this.activeOptionIndex]) {
         optionElements[this.activeOptionIndex].classList.remove("bg-gray-200")
@@ -66,21 +66,22 @@ Hooks.Select = {
       optionElements[this.activeOptionIndex].classList.add("bg-gray-200")
 
       // Scroll the selected item into view
-      // optionElements[this.activeOptionIndex].scrollIntoView({
-      //   block: "nearest",
-      //   behavior: "smooth"
-      // });
+      optionElements[this.activeOptionIndex].scrollIntoView({
+        block: "nearest",
+        behavior: "smooth"
+      });
     }
 
     this.onItemSelect = (e) => {
+
       // Get value and text from data-* attributes
-      this.selected = { value: e.target.dataset.id, text: e.target.dataset.text }
+      this.selected = { text: e.target.dataset.text }
 
       // Display the selected option in the input
       this.textInput.value = this.selected.text
 
       // Update the hidden input value and dispatch a change event
-      this.valueInput.value = this.selected.value
+      this.valueInput.value = this.selected.text
       this.valueInput.dispatchEvent(new Event("change", { bubbles: true }))
 
       this.close()
@@ -100,9 +101,11 @@ Hooks.Select = {
       } else if (e.key === "ArrowUp") {
         this.setActiveElementIndex(this.activeOptionIndex - 1)
       } else if (e.key === "Enter" && this.isOpen) {
-        console.log(this.activeOptionIndex)
+
         if (this.activeOptionIndex >= 0) {
-          const activeOption = this.selectMenu.querySelectorAll("[data-id]")[this.activeOptionIndex]
+          const activeOption = this.selectMenu.querySelectorAll("[data-text]")[this.activeOptionIndex]
+          console.log("activeOption ", activeOption)
+
           this.onItemSelect({ target: activeOption })
 
         }
@@ -110,12 +113,15 @@ Hooks.Select = {
         this.open()
       }
     })
-    this.selectMenu.querySelectorAll("[data-id]").forEach((option) => {
+    this.selectMenu.querySelectorAll("[data-text]").forEach((option) => {
       option.addEventListener("mousedown", this.onItemSelect)
     })
     this.textInput.addEventListener("input", (e) => {
-
       this.pushEvent(this.el.getAttribute("autocomplete"), { query: this.textInput.value })
+    })
+    this.textInput.addEventListener("blur", (e) => {
+      console.log("blur ", this.textInput.value)
+      this.valueInput.value = this.textInput.value
     })
   },
 
@@ -126,9 +132,9 @@ Hooks.Select = {
       this.selectMenu.classList.add("hidden")
     }
 
-    this.valueInput.value = this.selected.value
+    this.valueInput.value = this.selected.text
 
-    this.selectMenu.querySelectorAll("[data-id]").forEach((option) => {
+    this.selectMenu.querySelectorAll("[data-text]").forEach((option) => {
       option.addEventListener("mousedown", this.onItemSelect)
     })
   }
